@@ -4,9 +4,8 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Author } from './entities/author.entity';
 import { Repository } from 'typeorm';
-import { mkdir, writeFile, access, rm } from 'fs/promises';
+import { mkdir, writeFile, rm } from 'fs/promises';
 import * as path from 'path';
-import * as fs from 'fs';
 
 @Injectable()
 export class AuthorsService {
