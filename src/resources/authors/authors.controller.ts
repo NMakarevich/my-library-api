@@ -73,8 +73,7 @@ export class AuthorsController {
 
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    const { affected } = await this.authorsService.remove(id);
-    if (affected === 0) throw new HttpException('Author is not found', HttpStatus.NOT_FOUND);
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.authorsService.remove(id);
   }
 }
