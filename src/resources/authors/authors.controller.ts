@@ -35,6 +35,7 @@ export class AuthorsController {
           new MaxFileSizeValidator({ maxSize: 1000000 }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
+        fileIsRequired: false,
       }),
     )
     file: Express.Multer.File,
