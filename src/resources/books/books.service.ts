@@ -54,8 +54,11 @@ export class BooksService {
         book.coverURL = null;
       } catch {}
     }
+    book.title = updateBookDto.title || book.title;
+    book.publishedYear = updateBookDto.publishedYear || book.publishedYear;
+    book.status = updateBookDto.readStatus || book.status;
     if (file) {
-      const fileName = updateBookDto.title;
+      const fileName = book.title;
       book.coverURL = await savePhoto(fileName, file, 'books');
     }
     if (updateBookDto.authorsIds) {
@@ -63,9 +66,6 @@ export class BooksService {
         updateBookDto.authorsIds.map((authorId) => this.authorsService.findOne(authorId)),
       );
     }
-    book.title = updateBookDto.title || book.title;
-    book.publishedYear = updateBookDto.publishedYear || book.publishedYear;
-    book.status = updateBookDto.readStatus || book.status;
     return this.bookRepository.save(book);
   }
 
