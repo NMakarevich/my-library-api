@@ -4,8 +4,8 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Author } from './entities/author.entity';
 import { Repository } from 'typeorm';
-import { mkdir, writeFile, rm } from 'fs/promises';
-import * as path from 'path';
+import { rm } from 'fs/promises';
+import { savePhoto } from '../../utils/utils';
 
 @Injectable()
 export class AuthorsService {
@@ -16,17 +16,21 @@ export class AuthorsService {
   async create(createAuthorDto: CreateAuthorDto, file) {
     const author = this.authorRepository.create(createAuthorDto);
     if (file) {
-      author.photoURL = await writePhoto(author, file);
+      const fileName = `${author.firstName}${author.lastName || ''}`;
+      author.photoURL = await savePhoto(fileName, file, 'authors');
     }
     return this.authorRepository.save(author);
   }
 
   findAll() {
-    return this.authorRepository.find();
+    return this.authorRepository.find({ relations: { books: true } });
   }
 
   async findOne(id: string) {
-    const author = await this.authorRepository.findOne({ where: { id } });
+    const author = await this.authorRepository.findOne({
+      where: { id },
+      relations: { books: true },
+    });
     if (!author) throw new HttpException('Author is not found', HttpStatus.NOT_FOUND);
     return author;
   }
@@ -40,7 +44,8 @@ export class AuthorsService {
     }
     Object.assign(author, updateAuthorDto);
     if (file) {
-      author.photoURL = await writePhoto(author, file);
+      const fileName = `${author.firstName}${author.lastName || ''}`;
+      author.photoURL = await savePhoto(fileName, file, 'authors');
     }
     return this.authorRepository.save(author);
   }
@@ -55,12 +60,3 @@ export class AuthorsService {
     return this.authorRepository.delete(id);
   }
 }
-
-const writePhoto = async (author: Author, file: Express.Multer.File) => {
-  const fileName = `${author.firstName}${author.lastName || ''}`;
-  const fileExt = file.originalname.split('.').pop();
-  const photoURL = `./uploads/${fileName}.${fileExt}`;
-  await mkdir(path.join(process.cwd(), 'uploads'), { recursive: true });
-  await writeFile(photoURL, file.buffer);
-  return photoURL;
-};
