@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Book } from '../../books/entities/book.entity';
+import { JoinTable } from 'typeorm';
 
 @Entity('author')
 export class Author {
@@ -13,4 +15,8 @@ export class Author {
 
   @Column({ nullable: true })
   photoURL: string;
+
+  @ManyToMany(() => Book, (book) => book.authors, { cascade: true })
+  @JoinTable()
+  books: Book[];
 }
