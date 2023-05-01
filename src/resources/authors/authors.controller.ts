@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  HttpStatus,
-  HttpException,
   HttpCode,
   UseInterceptors,
   UploadedFile,
