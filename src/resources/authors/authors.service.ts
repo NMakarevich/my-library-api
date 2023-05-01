@@ -57,6 +57,6 @@ export class AuthorsService {
         await rm(author.photoURL);
       } catch {}
     }
-    return this.authorRepository.delete(id);
+    return this.authorRepository.remove(author, {});
   }
 }

@@ -58,7 +58,7 @@ export class BooksService {
       const fileName = updateBookDto.title;
       book.coverURL = await savePhoto(fileName, file, 'books');
     }
-    if (updateBookDto.authorsIds.length) {
+    if (updateBookDto.authorsIds) {
       book.authors = await Promise.all(
         updateBookDto.authorsIds.map((authorId) => this.authorsService.findOne(authorId)),
       );
@@ -76,6 +76,6 @@ export class BooksService {
         await rm(book.coverURL);
       } catch {}
     }
-    return this.bookRepository.delete(id);
+    return this.bookRepository.remove(book);
   }
 }
