@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from 'fs/promises';
-import path from 'path';
+import * as path from 'path';
 
 export async function savePhoto(fileName: string, file: Express.Multer.File, directory: string) {
   const fileExt = file.originalname.split('.').pop();
