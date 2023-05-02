@@ -18,7 +18,7 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
 
   @IsEnum(ReadStatus)
   @IsOptional()
-  readStatus: ReadStatus;
+  status: ReadStatus;
 
   @IsOptional()
   coverURL: null;

@@ -15,5 +15,5 @@ export class CreateBookDto {
 
   @IsEnum(ReadStatus)
   @IsOptional()
-  readStatus: ReadStatus;
+  status: ReadStatus;
 }

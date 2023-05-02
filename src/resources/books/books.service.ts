@@ -19,7 +19,7 @@ export class BooksService {
     const book = new Book();
     book.title = createBookDto.title;
     book.publishedYear = createBookDto.publishedYear;
-    book.status = createBookDto.readStatus || book.status;
+    book.status = createBookDto.status || book.status;
     book.authors = await Promise.all(
       createBookDto.authorsIds.map((authorId) => this.authorsService.findOne(authorId)),
     );
@@ -56,7 +56,7 @@ export class BooksService {
     }
     book.title = updateBookDto.title || book.title;
     book.publishedYear = updateBookDto.publishedYear || book.publishedYear;
-    book.status = updateBookDto.readStatus || book.status;
+    book.status = updateBookDto.status || book.status;
     if (file) {
       const fileName = book.title;
       book.coverURL = await savePhoto(fileName, file, 'books');
