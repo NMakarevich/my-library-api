@@ -5,8 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { AuthorsService } from '../authors/authors.service';
-import { savePhoto } from '../../utils/utils';
-import { rm } from 'fs/promises';
+import { deleteFile, savePhoto } from '../../utils/utils';
 
 @Injectable()
 export class BooksService {
@@ -48,11 +47,9 @@ export class BooksService {
 
   async update(id: string, updateBookDto: UpdateBookDto, file: Express.Multer.File) {
     const book = await this.findOne(id);
-    if (book.coverURL && updateBookDto.coverURL === null) {
-      try {
-        await rm(book.coverURL);
-        book.coverURL = null;
-      } catch {}
+    if (updateBookDto.coverURL === null) {
+      await deleteFile(book.coverURL);
+      book.coverURL = null;
     }
     book.title = updateBookDto.title || book.title;
     book.publishedYear = updateBookDto.publishedYear || book.publishedYear;
@@ -71,11 +68,7 @@ export class BooksService {
 
   async remove(id: string) {
     const book = await this.findOne(id);
-    if (book.coverURL) {
-      try {
-        await rm(book.coverURL);
-      } catch {}
-    }
+    await deleteFile(book.coverURL);
     return this.bookRepository.remove(book);
   }
 }

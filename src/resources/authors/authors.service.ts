@@ -4,8 +4,7 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Author } from './entities/author.entity';
 import { Repository } from 'typeorm';
-import { rm } from 'fs/promises';
-import { savePhoto } from '../../utils/utils';
+import { deleteFile, savePhoto } from '../../utils/utils';
 
 @Injectable()
 export class AuthorsService {
@@ -37,10 +36,9 @@ export class AuthorsService {
 
   async update(id: string, updateAuthorDto: UpdateAuthorDto, file: Express.Multer.File) {
     const author = await this.findOne(id);
-    if (author.photoURL && updateAuthorDto.photoURL === null) {
-      try {
-        await rm(author.photoURL);
-      } catch {}
+    if (updateAuthorDto.photoURL === null) {
+      await deleteFile(author.photoURL);
+      author.photoURL = null;
     }
     Object.assign(author, updateAuthorDto);
     if (file) {
@@ -52,11 +50,7 @@ export class AuthorsService {
 
   async remove(id: string) {
     const author = await this.findOne(id);
-    if (author.photoURL) {
-      try {
-        await rm(author.photoURL);
-      } catch {}
-    }
+    await deleteFile(author.photoURL);
     return this.authorRepository.remove(author, {});
   }
 }
