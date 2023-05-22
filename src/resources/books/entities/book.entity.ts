@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Author } from '../../authors/entities/author.entity';
+import { User } from '../../users/entities/user.entity';
 
 export enum ReadStatus {
   'NOT_READ' = 'notRead',
@@ -27,4 +28,7 @@ export class Book {
 
   @ManyToMany(() => Author, (author) => author.books)
   authors: Author[];
+
+  @ManyToMany(() => User, (user) => user.books)
+  users: User[];
 }
