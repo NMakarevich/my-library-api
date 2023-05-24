@@ -13,6 +13,10 @@ export class CreateBookDto {
   @IsArray()
   authorsIds: string[];
 
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
+
   @IsEnum(ReadStatus)
   @IsOptional()
   status: ReadStatus;

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { AuthorsService } from '../authors/authors.service';
 import { deleteFile, savePhoto } from '../../utils/utils';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class BooksService {
@@ -13,6 +14,8 @@ export class BooksService {
     @InjectRepository(Book)
     private readonly bookRepository: Repository<Book>,
     private readonly authorsService: AuthorsService,
+    @Inject(forwardRef(() => UsersService))
+    private readonly userService: UsersService,
   ) {}
   async create(createBookDto: CreateBookDto, file: Express.Multer.File) {
     const book = new Book();
@@ -22,6 +25,8 @@ export class BooksService {
     book.authors = await Promise.all(
       createBookDto.authorsIds.map((authorId) => this.authorsService.findOne(authorId)),
     );
+    const user = await this.userService.findOne(createBookDto.userId);
+    book.users.push(user);
     if (file) {
       const fileName = createBookDto.title;
       book.coverURL = await savePhoto(fileName, file, 'books');
