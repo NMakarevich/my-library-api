@@ -42,6 +42,7 @@ export class UsersService {
       user.photoURL = null;
     }
     if (file) {
+      await deleteFile(user.photoURL);
       user.photoURL = await savePhoto(file, 'users');
     }
     if (updateUserDto.oldPassword) {

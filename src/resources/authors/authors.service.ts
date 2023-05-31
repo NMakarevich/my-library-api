@@ -41,6 +41,7 @@ export class AuthorsService {
     }
     Object.assign(author, updateAuthorDto);
     if (file) {
+      await deleteFile(author.photoURL);
       author.photoURL = await savePhoto(file, 'authors');
     }
     return this.authorRepository.save(author);

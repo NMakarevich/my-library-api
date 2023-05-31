@@ -59,6 +59,7 @@ export class BooksService {
     book.publishedYear = updateBookDto.publishedYear || book.publishedYear;
     book.status = updateBookDto.status || book.status;
     if (file) {
+      await deleteFile(book.coverURL);
       book.coverURL = await savePhoto(file, 'books');
     }
     if (updateBookDto.authorsIds) {
