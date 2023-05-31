@@ -20,7 +20,7 @@ export class UsersService {
     const newUser = this.userRepository.create(createUserDto);
     newUser.password = await generateHash(newUser.password);
     if (file) {
-      newUser.photoURL = await savePhoto(createUserDto.username, file, 'users');
+      newUser.photoURL = await savePhoto(file, 'users');
     }
     return this.userRepository.save(newUser);
   }
@@ -42,7 +42,7 @@ export class UsersService {
       user.photoURL = null;
     }
     if (file) {
-      user.photoURL = await savePhoto(user.username, file, 'users');
+      user.photoURL = await savePhoto(file, 'users');
     }
     if (updateUserDto.oldPassword) {
       if (updateUserDto.oldPassword === updateUserDto.newPassword)

@@ -28,8 +28,7 @@ export class BooksService {
     const user = await this.userService.findOne(createBookDto.userId);
     book.users.push(user);
     if (file) {
-      const fileName = createBookDto.title;
-      book.coverURL = await savePhoto(fileName, file, 'books');
+      book.coverURL = await savePhoto(file, 'books');
     }
     return this.bookRepository.save(book);
   }
@@ -60,8 +59,7 @@ export class BooksService {
     book.publishedYear = updateBookDto.publishedYear || book.publishedYear;
     book.status = updateBookDto.status || book.status;
     if (file) {
-      const fileName = book.title;
-      book.coverURL = await savePhoto(fileName, file, 'books');
+      book.coverURL = await savePhoto(file, 'books');
     }
     if (updateBookDto.authorsIds) {
       book.authors = await Promise.all(

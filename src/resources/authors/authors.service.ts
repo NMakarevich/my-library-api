@@ -15,8 +15,7 @@ export class AuthorsService {
   async create(createAuthorDto: CreateAuthorDto, file) {
     const author = this.authorRepository.create(createAuthorDto);
     if (file) {
-      const fileName = `${author.firstName}${author.lastName || ''}`;
-      author.photoURL = await savePhoto(fileName, file, 'authors');
+      author.photoURL = await savePhoto(file, 'authors');
     }
     return this.authorRepository.save(author);
   }
@@ -42,8 +41,7 @@ export class AuthorsService {
     }
     Object.assign(author, updateAuthorDto);
     if (file) {
-      const fileName = `${author.firstName}${author.lastName || ''}`;
-      author.photoURL = await savePhoto(fileName, file, 'authors');
+      author.photoURL = await savePhoto(file, 'authors');
     }
     return this.authorRepository.save(author);
   }
