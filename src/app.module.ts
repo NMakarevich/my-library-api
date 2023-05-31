@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ormconfig } from './ormconfig';
 import { BooksModule } from './resources/books/books.module';
 import { UsersModule } from './resources/users/users.module';
+import { UploadsModule } from './resources/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from './resources/users/users.module';
     AuthorsModule,
     BooksModule,
     UsersModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
