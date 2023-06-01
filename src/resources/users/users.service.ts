@@ -17,6 +17,8 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto, file: Express.Multer.File) {
+    const user = await this.findByUsername(createUserDto.username);
+    if (user) throw new HttpException('User with such username is exist', HttpStatus.CONFLICT);
     const newUser = this.userRepository.create(createUserDto);
     newUser.password = await generateHash(newUser.password);
     if (file) {
