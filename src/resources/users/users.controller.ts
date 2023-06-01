@@ -11,6 +11,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,7 +23,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('file'))
   create(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile(
@@ -40,17 +41,19 @@ export class UsersController {
   }
 
   @Get()
+  @UseInterceptors(ClassSerializerInterceptor)
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('file'))
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
