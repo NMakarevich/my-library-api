@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Public } from './decorators/public.decorator';
 import { UsersService } from '../users/users.service';
+import { FILE_SIZE } from '../../utils/consts';
 
 @Controller('auth')
 export class AuthController {
@@ -40,7 +41,7 @@ export class AuthController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new MaxFileSizeValidator({ maxSize: FILE_SIZE }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
         fileIsRequired: false,

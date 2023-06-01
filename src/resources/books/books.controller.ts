@@ -17,6 +17,7 @@ import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FILE_SIZE } from '../../utils/consts';
 
 @Controller('books')
 export class BooksController {
@@ -29,7 +30,7 @@ export class BooksController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new MaxFileSizeValidator({ maxSize: FILE_SIZE }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
         fileIsRequired: false,
@@ -58,7 +59,7 @@ export class BooksController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new MaxFileSizeValidator({ maxSize: FILE_SIZE }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
         fileIsRequired: false,

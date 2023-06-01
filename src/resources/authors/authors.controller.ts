@@ -18,6 +18,7 @@ import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FILE_SIZE } from '../../utils/consts';
 
 @Controller('authors')
 export class AuthorsController {
@@ -30,7 +31,7 @@ export class AuthorsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new MaxFileSizeValidator({ maxSize: FILE_SIZE }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
         fileIsRequired: false,
@@ -59,7 +60,7 @@ export class AuthorsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new MaxFileSizeValidator({ maxSize: FILE_SIZE }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
         fileIsRequired: false,

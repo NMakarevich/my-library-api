@@ -18,6 +18,7 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteUserGuard } from './guards/delete-user.guard';
+import { FILE_SIZE } from '../../utils/consts';
 
 @Controller('users')
 export class UsersController {
@@ -43,7 +44,7 @@ export class UsersController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
+          new MaxFileSizeValidator({ maxSize: FILE_SIZE }),
           new FileTypeValidator({ fileType: 'image' }),
         ],
         fileIsRequired: false,
