@@ -7,6 +7,7 @@ import { ormconfig } from './ormconfig';
 import { BooksModule } from './resources/books/books.module';
 import { UsersModule } from './resources/users/users.module';
 import { UploadsModule } from './resources/uploads/uploads.module';
+import { AuthModule } from './resources/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UploadsModule } from './resources/uploads/uploads.module';
     BooksModule,
     UsersModule,
     UploadsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

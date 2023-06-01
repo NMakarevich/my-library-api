@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -14,31 +13,12 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('file'))
-  create(
-    @Body() createUserDto: CreateUserDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
-          new FileTypeValidator({ fileType: 'image' }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    return this.usersService.create(createUserDto, file);
-  }
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)

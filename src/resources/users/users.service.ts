@@ -35,6 +35,10 @@ export class UsersService {
     return user;
   }
 
+  async findByUsername(username: string) {
+    return this.userRepository.findOne({ where: { username } });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto, file: Express.Multer.File) {
     const user = await this.findOne(id);
     if (updateUserDto.photoURL === null) {
