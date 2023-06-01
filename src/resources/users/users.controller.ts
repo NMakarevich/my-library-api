@@ -12,10 +12,12 @@ import {
   FileTypeValidator,
   ClassSerializerInterceptor,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { DeleteUserGuard } from './guards/delete-user.guard';
 
 @Controller('users')
 export class UsersController {
@@ -53,6 +55,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteUserGuard)
   @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
