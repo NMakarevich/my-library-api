@@ -2,7 +2,7 @@ import { mkdir, rm, writeFile } from 'fs/promises';
 import * as path from 'path';
 import 'dotenv/config';
 import * as process from 'process';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 
 export async function savePhoto(file: Express.Multer.File, directory: string) {
