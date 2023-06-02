@@ -13,9 +13,10 @@ import {
   ClassSerializerInterceptor,
   HttpCode,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteUserGuard } from './guards/delete-user.guard';
 import { FILE_SIZE } from '../../utils/consts';
@@ -32,15 +33,15 @@ export class UsersController {
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(':id/photo')
   @UseInterceptors(ClassSerializerInterceptor, FileInterceptor('file'))
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+  updatePhoto(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateUserPhotoDto: UpdateUserPhotoDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -52,13 +53,40 @@ export class UsersController {
     )
     file: Express.Multer.File,
   ) {
-    return this.usersService.update(id, updateUserDto, file);
+    return this.usersService.updatePhoto(id, updateUserPhotoDto, file);
+  }
+
+  @Patch(':id/data')
+  @UseInterceptors(ClassSerializerInterceptor)
+  updateData(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateUserDataDto: UpdateUserDataDto,
+  ) {
+    return this.usersService.updateData(id, updateUserDataDto);
+  }
+
+  @Patch(':id/password')
+  @UseInterceptors(ClassSerializerInterceptor)
+  updatePassword(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+  ) {
+    return this.usersService.updatePassword(id, updateUserPasswordDto);
+  }
+
+  @Patch(':id/book')
+  @UseInterceptors(ClassSerializerInterceptor)
+  updateBooks(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateUserBooksDto: UpdateUserBooksDto,
+  ) {
+    return this.usersService.updateBooks(id, updateUserBooksDto);
   }
 
   @Delete(':id')
   @UseGuards(DeleteUserGuard)
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.usersService.remove(id);
   }
 }

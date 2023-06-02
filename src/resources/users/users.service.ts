@@ -1,11 +1,14 @@
 import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { generateHash, compareHash, savePhoto, deleteFile } from '../../utils/utils';
 import { BooksService } from '../books/books.service';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { UpdateUserBooksDto } from './dto/update-user-books.dto';
+import { UpdateUserPhotoDto } from './dto/update-user-photo.dto';
 
 @Injectable()
 export class UsersService {
@@ -41,9 +44,36 @@ export class UsersService {
     return this.userRepository.findOne({ where: { username } });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, file: Express.Multer.File) {
+  async updateData(id: string, updateUserDataDto: UpdateUserDataDto) {
     const user = await this.findOne(id);
-    if (updateUserDto.photoURL === null) {
+    Object.assign(user, updateUserDataDto);
+    return this.userRepository.save(user);
+  }
+
+  async updatePassword(id: string, updateUserPasswordDto: UpdateUserPasswordDto) {
+    const user = await this.findOne(id);
+    if (updateUserPasswordDto.oldPassword === updateUserPasswordDto.newPassword)
+      throw new HttpException('Passwords must not match', HttpStatus.CONFLICT);
+    const isMatch = await compareHash(updateUserPasswordDto.oldPassword, user.password);
+    if (!isMatch) throw new HttpException('Incorrect old password', HttpStatus.CONFLICT);
+    user.password = await generateHash(updateUserPasswordDto.newPassword);
+    return this.userRepository.save(user);
+  }
+
+  async updateBooks(id: string, updateUserBooksDto: UpdateUserBooksDto) {
+    const user = await this.findOne(id);
+    if (updateUserBooksDto.bookId) {
+      const book = await this.bookService.findOne(updateUserBooksDto.bookId);
+      user.books.push(book);
+    }
+    if (updateUserBooksDto.deleteBookId)
+      user.books = user.books.filter((book) => book.id !== updateUserBooksDto.deleteBookId);
+    return this.userRepository.save(user);
+  }
+
+  async updatePhoto(id: string, updateUserPhotoDto: UpdateUserPhotoDto, file: Express.Multer.File) {
+    const user = await this.findOne(id);
+    if (updateUserPhotoDto.photoURL === null) {
       await deleteFile(user.photoURL);
       user.photoURL = null;
     }
@@ -51,23 +81,6 @@ export class UsersService {
       await deleteFile(user.photoURL);
       user.photoURL = await savePhoto(file, 'users');
     }
-    if (updateUserDto.oldPassword) {
-      if (updateUserDto.oldPassword === updateUserDto.newPassword)
-        throw new HttpException('Passwords must not match', HttpStatus.CONFLICT);
-      const isMatch = await compareHash(updateUserDto.oldPassword, user.password);
-      if (!isMatch) throw new HttpException('Incorrect old password', HttpStatus.CONFLICT);
-      user.password = await generateHash(updateUserDto.newPassword);
-    }
-    if (updateUserDto.bookId) {
-      const book = await this.bookService.findOne(updateUserDto.bookId);
-      user.books.push(book);
-    }
-    if (updateUserDto.deleteBookId)
-      user.books = user.books.filter((book) => book.id !== updateUserDto.deleteBookId);
-    user.firstName = updateUserDto.firstName || user.firstName;
-    user.lastName = updateUserDto.lastName || user.lastName;
-    user.birthDate = updateUserDto.birthDate || user.birthDate;
-    return this.userRepository.save(user);
   }
 
   async remove(id: string) {
