@@ -12,6 +12,9 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Query,
+  HttpCode,
+  Req,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -27,6 +30,7 @@ export class BooksController {
   @UseInterceptors(FileInterceptor('file'))
   create(
     @Body() createBookDto: CreateBookDto,
+    @Req() req,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -38,7 +42,7 @@ export class BooksController {
     )
     file: Express.Multer.File,
   ) {
-    return this.booksService.create(createBookDto, file);
+    return this.booksService.create(createBookDto, req.user.userId, file);
   }
 
   @Get()

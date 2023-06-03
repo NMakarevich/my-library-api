@@ -16,6 +16,9 @@ export class Author {
   @Column({ nullable: true })
   photoURL: string;
 
+  @Column({ update: false })
+  createdUserId: string;
+
   @ManyToMany(() => Book, (book) => book.authors, { cascade: true })
   @JoinTable()
   books: Book[];

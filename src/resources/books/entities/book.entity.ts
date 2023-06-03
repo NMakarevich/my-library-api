@@ -26,6 +26,9 @@ export class Book {
   @Column({ type: 'enum', enum: ReadStatus, default: ReadStatus.NOT_READ })
   status: ReadStatus;
 
+  @Column({ update: false })
+  createdUserId: string;
+
   @ManyToMany(() => Author, (author) => author.books)
   authors: Author[];
 

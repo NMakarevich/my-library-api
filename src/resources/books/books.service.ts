@@ -17,11 +17,9 @@ export class BooksService {
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {}
-  async create(createBookDto: CreateBookDto, file: Express.Multer.File) {
-    const book = new Book();
-    book.title = createBookDto.title;
-    book.publishedYear = createBookDto.publishedYear;
-    book.status = createBookDto.status || book.status;
+  async create(createBookDto: CreateBookDto, userId, file: Express.Multer.File) {
+    const book = this.bookRepository.create(createBookDto);
+    book.createdUserId = userId;
     book.authors = await Promise.all(
       createBookDto.authorsIds.map((authorId) => this.authorsService.findOne(authorId)),
     );

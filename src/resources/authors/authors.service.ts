@@ -12,8 +12,9 @@ export class AuthorsService {
     @InjectRepository(Author)
     private readonly authorRepository: Repository<Author>,
   ) {}
-  async create(createAuthorDto: CreateAuthorDto, file) {
+  async create(createAuthorDto: CreateAuthorDto, userId: string, file: Express.Multer.File) {
     const author = this.authorRepository.create(createAuthorDto);
+    author.createdUserId = userId;
     if (file) {
       author.photoURL = await savePhoto(file, 'authors');
     }
