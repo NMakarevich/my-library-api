@@ -51,14 +51,14 @@ export class BooksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.booksService.findOne(id);
   }
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   update(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateBookDto: UpdateBookDto,
     @UploadedFile(
       new ParseFilePipe({
@@ -75,7 +75,8 @@ export class BooksController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @HttpCode(204)
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.booksService.remove(id);
   }
 }
