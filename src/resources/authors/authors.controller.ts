@@ -14,6 +14,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Req,
+  Query,
 } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
@@ -45,8 +46,8 @@ export class AuthorsController {
   }
 
   @Get()
-  findAll() {
-    return this.authorsService.findAll();
+  findAll(@Query() query: PaginationQueryEntity) {
+    return this.authorsService.findAll(query);
   }
 
   @Get(':id')

@@ -46,8 +46,8 @@ export class BooksController {
   }
 
   @Get()
-  findAll(@Query('authorId') authorId: string) {
-    return this.booksService.findAll(authorId);
+  findAll(@Query('authorId') authorId: string, @Query() query: PaginationQueryEntity) {
+    return this.booksService.findAll(authorId, query);
   }
 
   @Get(':id')

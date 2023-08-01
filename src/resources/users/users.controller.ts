@@ -14,6 +14,7 @@ import {
   HttpCode,
   UseGuards,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
@@ -27,8 +28,8 @@ export class UsersController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: PaginationQueryEntity) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

@@ -9,6 +9,7 @@ import { BooksService } from '../books/books.service';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserBooksDto } from './dto/update-user-books.dto';
 import { UpdateUserPhotoDto } from './dto/update-user-photo.dto';
+import { PaginationQueryEntity } from '../../utils/pagination-query.entity';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +31,9 @@ export class UsersService {
     return this.userRepository.save(newUser);
   }
 
-  findAll() {
-    return this.userRepository.find();
+  findAll(query: PaginationQueryEntity) {
+    const { limit = 10, offset = 0 } = query;
+    return this.userRepository.find({ skip: offset * limit, take: limit });
   }
 
   async findOne(id: string) {

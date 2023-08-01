@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Author } from './entities/author.entity';
 import { Repository } from 'typeorm';
 import { deleteFile, savePhoto } from '../../utils/utils';
+import { PaginationQueryEntity } from '../../utils/pagination-query.entity';
 
 @Injectable()
 export class AuthorsService {
@@ -21,8 +22,13 @@ export class AuthorsService {
     return this.authorRepository.save(author);
   }
 
-  findAll() {
-    return this.authorRepository.find({ relations: { books: true } });
+  findAll(query: PaginationQueryEntity) {
+    const { offset = 0, limit = 10 } = query;
+    return this.authorRepository.find({
+      relations: { books: true },
+      skip: offset * limit,
+      take: limit,
+    });
   }
 
   async findOne(id: string) {

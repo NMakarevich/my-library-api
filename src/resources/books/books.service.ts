@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { AuthorsService } from '../authors/authors.service';
 import { deleteFile, savePhoto } from '../../utils/utils';
 import { UsersService } from '../users/users.service';
+import { PaginationQueryEntity } from '../../utils/pagination-query.entity';
 
 @Injectable()
 export class BooksService {
@@ -23,7 +24,7 @@ export class BooksService {
     book.authors = await Promise.all(
       createBookDto.authorsIds.map((authorId) => this.authorsService.findOne(authorId)),
     );
-    const user = await this.userService.findOne(createBookDto.userId);
+    const user = await this.userService.findOne(userId);
     book.users.push(user);
     if (file) {
       book.coverURL = await savePhoto(file, 'books');
@@ -31,11 +32,20 @@ export class BooksService {
     return this.bookRepository.save(book);
   }
 
-  async findAll(authorId: string) {
-    const books = await this.bookRepository.find({ relations: { authors: true } });
+  async findAll(authorId: string, query: PaginationQueryEntity) {
+    const { offset = 0, limit = 10 } = query;
     return authorId
-      ? books.filter((book) => book.authors.some((author) => author.id === authorId))
-      : books;
+      ? await this.bookRepository.find({
+          relations: { authors: true },
+          where: { id: authorId },
+          skip: offset * limit,
+          take: limit,
+        })
+      : await this.bookRepository.find({
+          relations: { authors: true },
+          skip: offset * limit,
+          take: limit,
+        });
   }
 
   async findOne(id: string) {
